@@ -1,0 +1,7 @@
+
+Something still wrong with arm-specific CV variance - SEs are smaller than non-CV. Same for treatment effect CV variance as well. hmmmmm. something with LOO still not working. Non-LOOCV seems fine... think about this more.
+
+EXAMPLES AND DEMOS!
+
+DOCUMENTATION!
+

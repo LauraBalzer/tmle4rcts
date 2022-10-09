@@ -1,0 +1,141 @@
+---
+title: "tmle4rcts"
+author: "Josh Nugent"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tmle4rcts)
+```
+
+## Example 1: SEARCH-IPT ... under construction, ignore for now
+
+covar0 and covar 1 are associated with the outcome. covar2 is noise.
+
+```{r}
+set.seed(2)
+dat <- simulate_clustered_data(treatment_arm_clusters = 10, control_arm_clusters = 10)
+nrow(dat)
+length(unique(dat$cluster_id))
+Stage2(data.input = dat, goal = "RD",
+       psi = dat$unit_mean_diff[1], remove.pscore = T,
+       do.data.adapt = T, verbose = F, sample.effect = T,
+       cand.Qform = c("glm", "lasso","mars"),
+       cand.gform = c("glm", "step", "mars"),
+       cand.QAdj = c("covar0", "covar1", "covar2"),
+       cand.gAdj = c("covar0", "covar1", "covar2"))
+
+```
+
+What if we don't know if we want C-TMLE?
+
+```{r}
+set.seed(2)
+dat <- simulate_clustered_data(treatment_arm_clusters = 10, control_arm_clusters = 10)
+Stage2(data.input = dat, goal = "RD",
+       psi = dat$unit_mean_diff[1], #remove.pscore = T,
+       do.data.adapt = T, verbose = F, sample.effect = T,
+       cand.Qform = c("glm", "lasso","mars"),
+       cand.gform = c("glm", "step", "mars"),
+       cand.QAdj = c("covar0", "covar1", "covar2"),
+       cand.gAdj = c("covar0", "covar1", "covar2"))
+```
+
+
+What if we have a ton of data?
+
+```{r}
+set.seed(2)
+dat <- simulate_clustered_data(treatment_arm_clusters = 200, control_arm_clusters = 200)
+Stage2(data.input = dat, goal = "RD",
+       psi = dat$unit_mean_diff[1], #remove.pscore = T,
+       do.data.adapt = T, verbose = F, sample.effect = T,
+       cand.Qform = c("glm", "lasso","mars"),
+       cand.gform = c("glm", "step", "mars"),
+       cand.QAdj = c("covar0", "covar1", "covar2"),
+       cand.gAdj = c("covar0", "covar1", "covar2"))
+```
+
+
+
+
+```{}
+library(tmle4rcts)
+install()
+
+district <- readRDS("data/SIPT_district.rds")
+district <- district %>% cbind.data.frame(noise = rnorm(n = nrow(district)))
+set.seed(11)
+Stage2(target = 'indiv', cand.QAdj = c("init_uptake","baseline_active_care","noise"),
+       cand.Qform = 'glm', do.data.adapt = T, remove.pscore = T,
+       cand.gAdj = c("init_uptake", "baseline_active_care","noise"),
+       cand.gform = 'glm', verbose = F, break.match = T,
+       one.sided = T, alt.smaller = F, data.input = district)
+
+set.seed(13)
+Stage2(target = 'indiv', cand.QAdj = c("init_uptake","baseline_active_care","noise"),
+       cand.Qform = c('glm','earth','step'), do.data.adapt = T, remove.pscore = T,
+       cand.gAdj = c("init_uptake", "baseline_active_care","noise"),
+       cand.gform = c('glm','earth','step'), verbose = F, break.match = T,
+       one.sided = T, alt.smaller = F, data.input = district)
+
+set.seed(11)
+Stage2(target = 'indiv', cand.QAdj = c("init_uptake","baseline_active_care","noise"),
+       cand.Qform = c('earth','glm'), do.data.adapt = T, remove.pscore = T,
+       cand.gAdj = c("init_uptake", "baseline_active_care","noise"),
+       cand.gform = c('earth','glm'), verbose = F, break.match = T,
+       one.sided = T, alt.smaller = F, data.input = district)
+
+Stage2(target = 'indiv',
+       QAdj = "init_uptake", gAdj = "baseline_active_care",
+       do.data.adapt = F, break.match = T,
+       verbose = F,
+       one.sided = F, alt.smaller = F, data.input = district)
+
+Stage2(target = 'indiv', cand.QAdj = c("init_uptake"),
+       cand.Qform = c('glm'), do.data.adapt = T, remove.pscore = T,
+       cand.gAdj = c("U"),
+       cand.gform = c('glm'), verbose = F, break.match = T,
+       one.sided = T, alt.smaller = F, data.input = district)
+
+
+clinics <- readRDS("data/SIPT_clinic.rds") %>% mutate(noise = rnorm(n = nrow(clinics)))
+
+totAC <- sum(clinics$baseline_active_care)
+ndist <- length(unique(clinics$clinic))
+Stage2(target = 'indiv', cand.QAdj = c("baseline_active_care"),
+       cand.Qform = c('glm'), do.data.adapt = T, remove.pscore = T,
+       cand.gAdj = c("U"),
+       cand.gform = c('glm'), verbose = T, break.match = T,
+       one.sided = T, alt.smaller = F, data.input = clinics %>%
+         mutate(alpha = ndist * baseline_active_care / totAC))
+
+
+
+
+
+#orig:
+# Primary <- Stage2(weighting = "clust",
+#                   goal = "aRR",
+#                   data.input = pri_main %>%
+#                     mutate(id = irgtt_cluster_id, nIndv = 1, alpha = 1),
+#                   outcome = "Y", do.data.adapt = T, 
+#                   clust.adj = c("init_uptake", "baseline_active_care", "U"),
+#                   break.match = T)
+
+```
+
+
+
+
+## 
+
+
+
+
+
+
+

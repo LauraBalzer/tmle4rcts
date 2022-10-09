@@ -1,0 +1,25 @@
+Package: tmle4rcts
+Type: Package
+Title: TMLE for randomized controlled trials
+Version: 0.1.0
+Author: Laura Balzer, Josh Nugent
+Maintainer: Josh Nugent <joshuanugent@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Depends:
+    earth (>= 5.0.0),
+    dplyr (>= 1.0.0),
+    purrr (>= 0.2.0)
+Imports: 
+    dplyr,
+    earth,
+    glmnet,
+    utils,
+    magrittr,
+    purrr,
+    stats

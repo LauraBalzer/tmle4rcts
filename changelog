@@ -1,0 +1,41 @@
+
+Changes from "Meta" code shared on July 12. Hopefully I don't miss anything. -Josh
+
+ - Arm-specific CV variance estimate changes:
+  - Uses outputs DY0 and DY1 from get.IC.variance() in do.TMLE.validset()
+  - passes those up through get.IC.CV(), where it collects them (think LOOCV) and calculates variance
+  - then to CV.selector(), then to do.adaptive.prespec(), then Stage2(), which includes them as appropriate
+
+ - made remove.pscore = NULL the default, can be overridden in Stage2() call. Sets TRUE if # ind units <=40.
+
+ - Implemented sample.effect at Stage2() input and have ensured it cascades down to get.IC.variance()
+
+ - Moved get.IC.variance() to utility_functions.R
+
+ - Changed CV.selector() to output CV.risk = CV.risk[adj.index], not just CV.risk = CV.risk
+
+ - Implemented various small input checks at start of Stage2()
+  - Moved the code that checks that the alternative hypothesis direction is specified if a one-sided p-value is desired into the start of Stage2() rather than in get.inference to speed up the production of errors.
+ 
+ - Fixed the get.cand.adj() to output ALL subsets and algorithms (not just all/one variable)
+   - allows for low/medium/high complexity based on # of independent units per covariate, or you can user-specify
+   - Made the function generic, not Q/g
+   - Moved the call to the do.adaptive.prespec() function; calls it twice, removing selected Q variables for the second run for gAdj - changed how it removes variables for selecting the final gAdj
+   - Moved get.cand.adj() to utility_functions.R for easier side-by-side editing
+   - Commented out if(length(CAND.FORM) == 1) check from start of CV.selector(), should not be needed anymore
+
+ - created pre-processing/data checking function in utility_functions.R
+   - Gives warning message if data does not have 'id' column, and creates unique id for each row
+   - Checks for "U" column, adds it if not there
+   - Checks that data has a "Y" column
+   - Adds alpha = 1 column if nothing there (and a warning)
+   - If there is a "U" column in the data already but it's not all 1s, replaces it and generates a warning
+
+ - Changed Stage2() default to be two-sided test
+ - Added a lot of explicit return() statements for clarity
+ - Updated est.df code in Stage2() to return the candidate adjustment variables used instead of their index numbers
+
+ - Put %nin%, mean.harmonic, aggregage_IC, get.inference into utility_functions.R
+ - Copied ltmle::HouseholdIC function, renamed it aggregate_IC
+ - Created utility_functions.R for shared helper functions
+ - Changed the R script names to be simpler, more general

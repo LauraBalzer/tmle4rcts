@@ -397,7 +397,7 @@ do.TMLE.validset <- function(goal, target, valid,
 
 # adapted from .cvFolds from cvAUC package: https://CRAN.R-project.org/package=cvAUC
 # by Erin LeDell 
-# **** WARNING - stratify=T option is currently broken! *****
+# **** WARNING - stratify=T option is currently broken for cluster randomizzed trials! *****
 get.folds <- function(V, Y, ids, stratify=F){
   
   if(stratify & length(unique(Y))==2){

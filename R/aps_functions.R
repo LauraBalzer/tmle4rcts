@@ -169,7 +169,7 @@ do.adaptive.prespec <- function(goal, target='indv', break.match=T, Ldata, V=5,
     gAdj <- select.G$Adj
     gform <- select.G$form
     var.CV <- select.G$var.CV		
-    var.CV.1 <- select.G$var.CV.0		
+    var.CV.1 <- select.G$var.CV.1		
     var.CV.0 <- select.G$var.CV.0		
     #if(verbose){print(select.G);    print("Selected for g:");  print(gAdj);  print(gform)}
   }		
